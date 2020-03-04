@@ -1,4 +1,5 @@
-FROM zabbix/zabbix-agent2:latest
+ARG BASE_IMAGE=zabbix/zabbix-agent2:latest
+FROM $BASE_IMAGE
 
 USER root
 
