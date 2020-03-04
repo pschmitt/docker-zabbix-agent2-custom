@@ -5,6 +5,6 @@ USER root
 
 RUN apk add --no-cache jq perl smartmontools sudo
 
-VOLUME ["/etc/zabbix/bin"]
+VOLUME ["/usr/local/bin"]
 
 USER zabbix
