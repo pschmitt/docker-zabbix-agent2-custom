@@ -1,9 +1,10 @@
 language: minimal
 services:
   - docker
+sudo: required
 script:
   - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json
   - sudo service docker restart
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-  - ./build.sh all
+  - ./build.sh docker
   - ./build.sh docker_arm
