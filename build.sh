@@ -36,9 +36,10 @@ build_docker() {
 
 build_docker_arm() {
   # Setup qemu emulation
-  echo -1 | sudo tee /proc/sys/fs/binfmt_misc/qemu-aarch64 > /dev/null
-  echo ':qemu-aarch64:M:0:\x7f\x45\x4c\x46\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\xb7\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/bin/qemu-aarch64-static:CF' | \
-    sudo tee /proc/sys/fs/binfmt_misc/register > /dev/null
+  if [[ "$(uname -m)" == "x86_64" ]]
+  then
+    docker run --rm --privileged docker/binfmt:820fdd95a9972a5308930a2bdfb8573dd4447ad3
+  fi
   # Build image
   __build_docker armhf
 }

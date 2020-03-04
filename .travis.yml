@@ -1,7 +1,7 @@
 language: minimal
+sudo: required
 services:
   - docker
-sudo: required
 script:
   - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json
   - sudo service docker restart
