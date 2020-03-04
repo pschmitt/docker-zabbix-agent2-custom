@@ -2,9 +2,11 @@ language: minimal
 sudo: required
 services:
   - docker
+env:
+  - TARGET=docker
+  - TARGET=docker_arm
 script:
   - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json
   - sudo service docker restart
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-  - ./build.sh docker
-  - ./build.sh docker_arm
+  - ./build.sh "$TARGET"
