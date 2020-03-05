@@ -4,10 +4,10 @@ cd "$(readlink -f "$(dirname "$0")")" || exit 9
 
 set -e
 
-BASE_IMAGE_AMD64=zabbix/zabbix-agent2:latest
-BASE_IMAGE_ARMHF="pschmitt/zabbix-agent-alpine:4.4.6"
+BASE_IMAGE_AMD64="zabbix/zabbix-agent2:latest"
+BASE_IMAGE_ARMHF="pschmitt/zabbix-agent-alpine:latest"
 IMAGE_NAME_AMD64="pschmitt/zabbix-agent2-custom:latest"
-IMAGE_NAME_ARMHF="pschmitt/zabbix-agent-custom:armhf"
+IMAGE_NAME_ARMHF="pschmitt/zabbix-agent-custom:latest"
 
 usage() {
   echo "Usage: $0 docker|docker_arm"
