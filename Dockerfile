@@ -7,7 +7,7 @@ RUN apk add --no-cache git jq perl smartmontools sudo
 ADD zbx-install-templates.sh /zbx-install-templates.sh
 ADD entrypoint.sh /entrypoint.sh
 
-RUN /zbx-install_templates.sh \
+RUN /zbx-install-templates.sh \
       https://github.com/pschmitt/zabbix-template-package-updates \
       https://github.com/pschmitt/zabbix-template-reboot-required
 
