@@ -16,4 +16,4 @@ VOLUME ["/usr/local/bin"]
 
 # USER zabbix
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/sbin/tini", "--", "/entrypoint.sh"]
