@@ -61,7 +61,7 @@ install_smartctl_template() {
   cp "${GIT_TMP_DIR}/sudoers_zabbix_smartctl" "$SUDOERS_DIR/smartctl"
   cp "${GIT_TMP_DIR}/zabbix_smartctl.conf" "${ZBX_CONF_DIR}/smartctl.conf"
   # Fix path to binary
-  sed -i -r "s|= .+(smartctl-disks-discovery.pl)|${BIN_DIR}/\1|" \
+  sed -i -r "s|= .+(smartctl-disks-discovery.pl)|= ${BIN_DIR}/\1|" \
     "${SUDOERS_DIR}/smartctl"
   sed -i -r "s|,sudo .+(smartctl-disks-discovery.pl)|,sudo ${BIN_DIR}/\1|" \
     "${ZBX_CONF_DIR}/smartctl.conf"
