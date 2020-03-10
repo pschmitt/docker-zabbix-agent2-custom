@@ -27,20 +27,26 @@ then
 
   cd "$(readlink -f "$(dirname "$0")")" || exit 9
 
-  # export DOCKER_CLI_EXPERIMENTAL=enabled
-  # export PATH="${PATH}:~/.docker/cli-plugins"
-
   # shellcheck disable=2207
   platforms=($(get_available_architectures zabbixmultiarch/zabbix-agent2 latest))
 
   PUSH_IMAGE=true
+  BUILD_TYPE=manual
+
+  if [[ "$TRAVIS" == "true" ]]
+  then
+    BUILD_TYPE=travis
+  elif [[ "$GITHUB_ACTIONS" == "true" ]]
+  then
+    BUILD_TYPE=github
+  fi
 
   docker buildx build \
     --platform "$(array_join "," "${platforms[@]}")" \
     --output "type=image,push=${PUSH_IMAGE}" \
     --no-cache \
     --label=built-by=pschmitt \
-    --label=build-type=manual \
+    --label=build-type="$BUILD_TYPE" \
     --label=built-on="$HOSTNAME" \
     --tag "${IMAGE_NAME}:latest" \
     .
