@@ -4,13 +4,10 @@ language: minimal
 sudo: required
 services:
   - docker
-addons:
-  apt:
-    packages:
-      - docker-ce
-      - jq
+packages:
+  - jq
 # before_install:
 script:
-  - curl -L https://raw.githubusercontent.com/pschmitt/ci-setup-docker-buildx/master/setup.sh | bash
+  - curl -fsSL https://raw.githubusercontent.com/pschmitt/ci-setup-docker-buildx/master/setup.sh | bash
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
   - ./build.sh
