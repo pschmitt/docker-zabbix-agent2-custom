@@ -27,8 +27,8 @@ then
 
   cd "$(readlink -f "$(dirname "$0")")" || exit 9
 
-  export DOCKER_CLI_EXPERIMENTAL=enabled
-  export PATH="${PATH}:~/.docker/cli-plugins"
+  # export DOCKER_CLI_EXPERIMENTAL=enabled
+  # export PATH="${PATH}:~/.docker/cli-plugins"
 
   # shellcheck disable=2207
   platforms=($(get_available_architectures zabbixmultiarch/zabbix-agent2 latest))
