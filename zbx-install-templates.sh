@@ -58,7 +58,7 @@ install_smartctl_template() {
   install_dependencies perl smartmontools
 
   cp "${GIT_TMP_DIR}/discovery-scripts/nix/smartctl-disks-discovery.pl" "$BIN_DIR"
-  cp "${GIT_TMP_DIR}/sudoers_zabbix_smartctl" "$SUDOERS_DIR/smartctl"
+  cp "${GIT_TMP_DIR}/sudoers_zabbix_smartctl" "${SUDOERS_DIR}/smartctl"
   cp "${GIT_TMP_DIR}/zabbix_smartctl.conf" "${ZBX_CONF_DIR}/smartctl.conf"
   # Fix path to binary
   sed -i -r "s|= .+(smartctl-disks-discovery.pl)|= ${BIN_DIR}/\1|" \
