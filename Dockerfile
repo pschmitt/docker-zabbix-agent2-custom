@@ -2,18 +2,24 @@ FROM zabbixmultiarch/zabbix-agent2:latest
 
 USER root
 
-RUN apk add --no-cache git jq perl smartmontools sudo
+ADD zbx-install-templates.sh /usr/bin/zbx-install-templates.sh
+ADD docker-entrypoint.patch /docker-entrypoint.patch
 
-ADD zbx-install-templates.sh /zbx-install-templates.sh
-ADD entrypoint.sh /entrypoint.sh
+RUN apk add --no-cache git jq perl smartmontools sudo && \
+    patch -p1 /usr/bin/docker-entrypoint.sh < /docker-entrypoint.patch && \
+    rm /docker-entrypoint.patch && \
+    zbx-install-templates.sh \
+      mdadm \
+      pkg-updates \
+      reboot-required \
+      restic \
+      smartctl \
+      speedtest
 
-RUN /zbx-install-templates.sh \
-      https://github.com/pschmitt/zabbix-template-package-updates \
-      https://github.com/pschmitt/zabbix-template-reboot-required
-
+VOLUME ["/etc/sudoers.d"]
 VOLUME ["/rootfs"]
 VOLUME ["/usr/local/bin"]
 
-# USER zabbix
+ENV PATH=/zabbix/bin:${PATH}
 
-ENTRYPOINT ["/sbin/tini", "--", "/entrypoint.sh"]
+USER zabbix

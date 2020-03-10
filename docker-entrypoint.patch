@@ -1,0 +1,21 @@
+--- docker-entrypoint.sh.orig	2020-03-10 14:56:50.924394955 +0100
++++ docker-entrypoint.sh	2020-03-10 15:49:50.614484308 +0100
+@@ -182,6 +182,18 @@
+ prepare_agent() {
+     echo "** Preparing Zabbix agent"
+     prepare_zbx_agent_config
++    include_static_zabbix_conf
++}
++
++include_static_zabbix_conf() {
++  local config=/etc/zabbix/zabbix_agent2.conf
++  local static_dir=/etc/zabbix/zabbix_agentd.d_static/
++
++  # Insert Include statement at the end
++  awk 'FNR==NR{ if (/Include=/) p=NR; next} 1; FNR==p{ print "Include='"${static_dir}"'" }' \
++    "$config" "$config" \
++    > "${config}.new"
++  mv "${config}.new" "$config"
+ }
+ 
+ #################################################
