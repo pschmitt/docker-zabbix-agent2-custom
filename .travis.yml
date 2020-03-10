@@ -1,12 +1,13 @@
+arch:
+  - amd64
 language: minimal
 sudo: required
 services:
   - docker
-env:
-  - TARGET=docker
-  - TARGET=docker_arm
+packages:
+  - jq
+before_install:
+  - curl -L https://raw.githubusercontent.com/pschmitt/ci-setup-docker-buildx/master/setup.sh | bash
 script:
-  - echo '{"experimental":true}' | sudo tee /etc/docker/daemon.json
-  - sudo service docker restart
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-  - ./build.sh "$TARGET"
+  - ./build.sh

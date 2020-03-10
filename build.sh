@@ -1,61 +1,47 @@
 #!/usr/bin/env bash
 
-cd "$(readlink -f "$(dirname "$0")")" || exit 9
-
-set -e
-
-BASE_IMAGE_AMD64="zabbix/zabbix-agent2:latest"
-BASE_IMAGE_ARMHF="pschmitt/zabbix-agent-alpine:latest"
-IMAGE_NAME_AMD64="pschmitt/zabbix-agent2-custom:latest"
-IMAGE_NAME_ARMHF="pschmitt/zabbix-agent-custom:latest"
+IMAGE_NAME="pschmitt/zabbix-agent2"
 
 usage() {
-  echo "Usage: $0 docker|docker_arm"
+  echo "Usage: $0"
 }
 
-__build_docker() {
-  # Default to amd64
-  local base_img="$BASE_IMAGE_AMD64"
-  local img_name="$IMAGE_NAME_AMD64"
-
-  if [[ "$1" == "armhf" ]]
-  then
-    base_img="$BASE_IMAGE_ARMHF"
-    img_name="$IMAGE_NAME_ARMHF"
-  fi
-
-  docker build \
-    --build-arg BASE_IMAGE="$base_img" \
-    -t "$img_name" .
-  docker push "$img_name"
+array_join() {
+  local IFS="$1"
+  shift
+  echo "$*"
 }
 
-build_docker() {
-  __build_docker amd64
+get_available_architectures() {
+  local image="$1"
+  local tag="${2:-latest}"
+
+  docker buildx imagetools inspect --raw "${image}:${tag}" | \
+    jq -r '.manifests[].platform | .os + "/" + .architecture + "/" + .variant' | \
+    sed 's#/$##' | sort
 }
 
-build_docker_arm() {
-  # Setup qemu emulation
-  if [[ "$(uname -m)" == "x86_64" ]]
-  then
-    docker run --rm --privileged docker/binfmt:820fdd95a9972a5308930a2bdfb8573dd4447ad3
-  fi
-  # Build image
-  __build_docker armhf
-}
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]
+then
+  set -ex
 
-case "$1" in
-  help|h|-h|--help)
-    usage
-    ;;
-  docker|docker_amd64|docker_x86_64)
-    build_docker
-    ;;
-  docker_arm|docker_aarch64|docker_rpi)
-    build_docker_arm
-    ;;
-  *)
-    usage
-    exit 2
-    ;;
-esac
+  cd "$(readlink -f "$(dirname "$0")")" || exit 9
+
+  export DOCKER_CLI_EXPERIMENTAL=enabled
+  export PATH="${PATH}:~/.docker/cli-plugins"
+
+  # shellcheck disable=2207
+  platforms=($(get_available_architectures zabbixmultiarch/zabbix-agent2 latest))
+
+  PUSH_IMAGE=true
+
+  docker buildx build \
+    --platform "$(array_join "," "${platforms[@]}")" \
+    --output "type=image,push=${PUSH_IMAGE}" \
+    --no-cache \
+    --label=built-by=pschmitt \
+    --label=build-type=manual \
+    --label=built-on="$HOSTNAME" \
+    --tag "${IMAGE_NAME}:latest" \
+    .
+fi
