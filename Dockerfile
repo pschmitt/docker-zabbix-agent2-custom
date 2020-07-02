@@ -21,5 +21,3 @@ VOLUME ["/rootfs"]
 VOLUME ["/usr/local/bin"]
 
 ENV PATH=/zabbix/bin:${PATH} GID= GROUP=
-
-USER zabbix
