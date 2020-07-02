@@ -183,17 +183,37 @@ prepare_agent() {
     echo "** Preparing Zabbix agent"
     prepare_zbx_agent_config
     include_static_zabbix_conf
+    join_custom_group
+}
+
+join_custom_group() {
+    # Create custom group and add zabbix user to it
+    if [[ -n "$GROUP" ]] || [[ -n "$GID" ]]
+    then
+        local extra_args=()
+        local group="${GROUP:-custom_group}"
+
+        if [[ -n "$GID" ]]
+        then
+            extra_args+=(-g "$GID")
+        fi
+
+        addgroup "${extra_args[@]}" "$group"
+        addgroup zabbix "$group"
+
+        unset GROUP GID
+    fi
 }
 
 include_static_zabbix_conf() {
-  local config=/etc/zabbix/zabbix_agent2.conf
-  local static_dir=/etc/zabbix/zabbix_agentd.d_static
+    local config=/etc/zabbix/zabbix_agent2.conf
+    local static_dir=/etc/zabbix/zabbix_agentd.d_static/
 
-  # Insert Include statement at the end
-  awk 'FNR==NR{ if (/Include=/) p=NR; next} 1; FNR==p{ print "Include='"${static_dir}"'" }' \
-    "$config" "$config" \
-    > "${config}.new"
-  mv "${config}.new" "$config"
+    # Insert Include statement at the end
+    awk 'FNR==NR{ if (/Include=/) p=NR; next} 1; FNR==p{ print "Include='"${static_dir}"'" }' \
+      "$config" "$config" \
+      > "${config}.new"
+    mv "${config}.new" "$config"
 }
 
 #################################################
@@ -206,6 +226,6 @@ if [ "$1" == '/usr/sbin/zabbix_agent2' ]; then
     prepare_agent
 fi
 
-exec "$@"
+exec su zabbix -c "$*"
 
 #################################################
