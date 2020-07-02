@@ -1,6 +1,6 @@
---- docker-entrypoint.sh.orig	2020-03-10 14:56:50.924394955 +0100
-+++ docker-entrypoint.sh	2020-03-10 15:49:50.614484308 +0100
-@@ -182,6 +182,18 @@
+--- docker-entrypoint.sh.orig	2020-07-02 10:14:57.901742414 +0200
++++ docker-entrypoint.sh	2020-07-02 10:18:49.355800194 +0200
+@@ -182,6 +182,38 @@
  prepare_agent() {
      echo "** Preparing Zabbix agent"
      prepare_zbx_agent_config
@@ -9,33 +9,33 @@
 +}
 +
 +join_custom_group() {
-+ # Create custom group and add zabbix user to it
-+ if [[ -n "$GROUP" ]] || [[ -n "$GID" ]]
-+ then
-+   local extra_args=()
-+   local group="${GROUP:-custom_group}"
++    # Create custom group and add zabbix user to it
++    if [[ -n "$GROUP" ]] || [[ -n "$GID" ]]
++    then
++        local extra_args=()
++        local group="${GROUP:-custom_group}"
 +
-+   if [[ -n "$GID" ]]
-+   then
-+     extra_args+=(-g "$GID")
-+   fi
++        if [[ -n "$GID" ]]
++        then
++            extra_args+=(-g "$GID")
++        fi
 +
-+   addgroup "${extra_args[@]}" "$group"
-+   addgroup zabbix "$group"
++        addgroup "${extra_args[@]}" "$group"
++        addgroup zabbix "$group"
 +
-+   unset GROUP GID
-+ fi
++        unset GROUP GID
++    fi
 +}
 +
 +include_static_zabbix_conf() {
-+  local config=/etc/zabbix/zabbix_agent2.conf
-+  local static_dir=/etc/zabbix/zabbix_agentd.d_static/
++    local config=/etc/zabbix/zabbix_agent2.conf
++    local static_dir=/etc/zabbix/zabbix_agentd.d_static/
 +
-+  # Insert Include statement at the end
-+  awk 'FNR==NR{ if (/Include=/) p=NR; next} 1; FNR==p{ print "Include='"${static_dir}"'" }' \
-+    "$config" "$config" \
-+    > "${config}.new"
-+  mv "${config}.new" "$config"
++    # Insert Include statement at the end
++    awk 'FNR==NR{ if (/Include=/) p=NR; next} 1; FNR==p{ print "Include='"${static_dir}"'" }' \
++      "$config" "$config" \
++      > "${config}.new"
++    mv "${config}.new" "$config"
  }
  
  #################################################
