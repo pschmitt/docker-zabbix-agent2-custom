@@ -226,6 +226,6 @@ if [ "$1" == '/usr/sbin/zabbix_agent2' ]; then
     prepare_agent
 fi
 
-exec su zabbix -c "$*"
+exec su -s /bin/bash zabbix -c "$*"
 
 #################################################
