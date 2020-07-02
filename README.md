@@ -1,5 +1,5 @@
 # custom zabbix-agent2 container
 
-[![Build Status](https://travis-ci.com/pschmitt/docker-zabbix-agent2-custom.svg?branch=master)](https://travis-ci.com/pschmitt/docker-zabbix-agent2-custom)
+[![Build](https://github.com/pschmitt/docker-zabbix-agent2-custom/workflows/Build/badge.svg)](https://github.com/pschmitt/docker-zabbix-agent2-custom/actions?query=workflow%3ABuild)
 
 https://hub.docker.com/r/pschmitt/zabbix-agent2
