@@ -5,6 +5,26 @@
      echo "** Preparing Zabbix agent"
      prepare_zbx_agent_config
 +    include_static_zabbix_conf
++    join_custom_group
++}
++
++join_custom_group() {
++ # Create custom group and add zabbix user to it
++ if [[ -n "$GROUP" ]] || [[ -n "$GID" ]]
++ then
++   local extra_args=()
++   local group="${GROUP:-custom_group}"
++
++   if [[ -n "$GID" ]]
++   then
++     extra_args+=(-g "$GID")
++   fi
++
++   addgroup "${extra_args[@]}" "$group"
++   addgroup zabbix "$group"
++
++   unset GROUP GID
++ fi
 +}
 +
 +include_static_zabbix_conf() {
