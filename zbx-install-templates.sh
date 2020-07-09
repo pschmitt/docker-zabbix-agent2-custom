@@ -145,6 +145,10 @@ then
   for template in "${TEMPLATES[@]}"
   do
     case "$template" in
+      docker-swarm|swarm)
+        install_template \
+          https://github.com/pschmitt/zabbix-template-docker-swarm
+        ;;
       mdadm|raid)
         install_mdadm_template
         ;;
